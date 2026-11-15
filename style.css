@@ -41,6 +41,9 @@ body {
   color: var(--text-primary);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  width: 780px;
+  height: 580px;
+  overflow: hidden;
 }
 
 /* App Layout */

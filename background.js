@@ -3,7 +3,7 @@ const STORAGE_KEY = 'linkvault_items_v2';
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "save-to-linkvault",
-    title: "Save to LinkVault",
+    title: "Save to Willy's Bookmark Pocket",
     contexts: ["page", "link"]
   });
 });
@@ -33,7 +33,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
       items.unshift(newItem);
       chrome.storage.local.set({ [STORAGE_KEY]: items }, () => {
-        console.log('Successfully saved to LinkVault storage!');
+        console.log("Successfully saved to Pocket!");
       });
     });
   }
