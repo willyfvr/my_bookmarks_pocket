@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Bookmark's Pocket",
+  "version": "1.0",
+  "description": "Save LinkedIn posts and any web link for future research with custom labels.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "contextMenus"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  }
+}
