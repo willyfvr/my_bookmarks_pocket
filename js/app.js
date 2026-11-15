@@ -1,7 +1,10 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // Load items asynchronously from storage (supports Web localStorage & Chrome extension storage)
+  const loadedItems = await DataStore.loadItems();
+
   // Application State
   const state = {
-    items: DataStore.loadItems(),
+    items: loadedItems,
     statusFilter: 'all', // 'all' | 'unread' | 'favorite' | 'archived'
     selectedSources: new Set(),
     selectedLabels: new Set(),
@@ -29,8 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Persistence Helper
-  function commit() {
-    DataStore.saveItems(state.items);
+  async function commit() {
+    await DataStore.saveItems(state.items);
     renderAll();
   }
 
@@ -146,33 +149,33 @@ document.addEventListener('DOMContentLoaded', () => {
     UIRenderer.renderDrawer(
       dom.drawerBody,
       item,
-      (itemId, notes) => {
+      async (itemId, notes) => {
         const target = state.items.find((i) => i.id === itemId);
         if (target) {
           target.notes = notes;
-          DataStore.saveItems(state.items);
+          await DataStore.saveItems(state.items);
         }
       },
-      (itemId, newTag) => {
+      async (itemId, newTag) => {
         const target = state.items.find((i) => i.id === itemId);
         if (target && !target.labels.includes(newTag)) {
           target.labels.push(newTag);
-          commit();
+          await commit();
           openReaderDrawer(itemId);
         }
       },
-      (itemId, tagToRemove) => {
+      async (itemId, tagToRemove) => {
         const target = state.items.find((i) => i.id === itemId);
         if (target) {
           target.labels = target.labels.filter((t) => t !== tagToRemove);
-          commit();
+          await commit();
           openReaderDrawer(itemId);
         }
       },
-      (itemId) => {
+      async (itemId) => {
         state.items = state.items.filter((i) => i.id !== itemId);
         dom.readerDrawer.hidden = true;
-        commit();
+        await commit();
       }
     );
 
@@ -205,9 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
     renderAll();
   });
 
-  dom.clearSamplesBtn.addEventListener('click', () => {
+  dom.clearSamplesBtn.addEventListener('click', async () => {
     state.items = state.items.filter((i) => !i.isSample);
-    commit();
+    await commit();
   });
 
   // View & Theme Toggles
@@ -241,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('contentInput').value = 'Flaky selectors cost engineering teams hours every week. Here is a lightweight pattern for fallback locator resolution...';
   });
 
-  dom.saveForm.addEventListener('submit', (e) => {
+  dom.saveForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const url = document.getElementById('urlInput').value.trim();
     const rawLabels = document.getElementById('labelsInput').value;
@@ -268,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     state.items.unshift(newItem);
     closeSaveModal();
-    commit();
+    await commit();
   });
 
   // Drawer Controls
@@ -277,20 +280,20 @@ document.addEventListener('DOMContentLoaded', () => {
     renderAll();
   });
 
-  document.getElementById('drawerFavBtn').addEventListener('click', () => {
+  document.getElementById('drawerFavBtn').addEventListener('click', async () => {
     const item = state.items.find((i) => i.id === state.activeItemId);
     if (item) {
       item.favorite = !item.favorite;
-      commit();
+      await commit();
       openReaderDrawer(item.id);
     }
   });
 
-  document.getElementById('drawerArchiveBtn').addEventListener('click', () => {
+  document.getElementById('drawerArchiveBtn').addEventListener('click', async () => {
     const item = state.items.find((i) => i.id === state.activeItemId);
     if (item) {
       item.archived = !item.archived;
-      commit();
+      await commit();
       openReaderDrawer(item.id);
     }
   });
@@ -316,12 +319,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       try {
         const imported = JSON.parse(event.target.result);
         if (Array.isArray(imported)) {
           state.items = imported;
-          commit();
+          await commit();
         }
       } catch {
         alert('Invalid JSON backup file.');
