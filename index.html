@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinkVault — Web & LinkedIn Research Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <span class="brand-icon">🔖</span>
+          <span class="brand-name">LinkVault</span>
+        </div>
+        <button class="icon-btn mobile-only" id="closeSidebarBtn" aria-label="Close menu">✕</button>
+      </div>
+
+      <button class="btn-primary full-width" id="openSaveModalBtn">+ Save Resource</button>
+
+      <nav class="nav-section">
+        <div class="nav-label">Library</div>
+        <button class="nav-item active" data-filter-status="all">
+          <span>All Saves</span>
+          <span class="badge" id="count-all">0</span>
+        </button>
+        <button class="nav-item" data-filter-status="unread">
+          <span>To Research</span>
+          <span class="badge" id="count-unread">0</span>
+        </button>
+        <button class="nav-item" data-filter-status="favorite">
+          <span>Favorites</span>
+          <span class="badge" id="count-favorite">0</span>
+        </button>
+        <button class="nav-item" data-filter-status="archived">
+          <span>Archived</span>
+          <span class="badge" id="count-archived">0</span>
+        </button>
+      </nav>
+
+      <nav class="nav-section">
+        <div class="nav-label">Sources</div>
+        <div id="sourceFiltersList" class="chip-column"></div>
+      </nav>
+
+      <nav class="nav-section scrollable-tags">
+        <div class="nav-header-row">
+          <span class="nav-label">Labels</span>
+          <button class="text-btn" id="clearFiltersBtn" hidden>Reset</button>
+        </div>
+        <div id="labelFiltersList" class="chip-column"></div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn-ghost small" id="exportBtn">Export JSON</button>
+        <label class="btn-ghost small" for="importInput" style="cursor:pointer;">Import</label>
+        <input type="file" id="importInput" accept=".json" hidden />
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn mobile-only" id="openSidebarBtn" aria-label="Open menu">☰</button>
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="search" id="searchInput" placeholder="Search titles, authors, notes, or #labels..." />
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <select id="sortSelect" class="select-control" aria-label="Sort items">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="title">Title A–Z</option>
+          </select>
+          <button class="icon-btn" id="viewToggleBtn" title="Toggle Grid/List View">⊞</button>
+          <button class="icon-btn" id="themeToggleBtn" title="Toggle Dark Mode">🌙</button>
+        </div>
+      </header>
+
+      <div class="workspace-header">
+        <div>
+          <h1 id="viewTitle">All Saves</h1>
+          <p class="subtitle" id="activeFilterSummary">Showing all saved links and research notes</p>
+        </div>
+        <button class="btn-ghost small" id="clearSamplesBtn">Clear Sample Data</button>
+      </div>
+
+      <!-- Cards Container -->
+      <section id="cardsGrid" class="cards-grid"></section>
+    </main>
+  </div>
+
+  <!-- Save / Edit Resource Modal -->
+  <div class="modal-backdrop" id="saveModal" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Save Link for Research</h2>
+        <button class="icon-btn" id="closeSaveModalBtn">✕</button>
+      </div>
+
+      <form id="saveForm" class="form-stack">
+        <div class="form-group">
+          <label for="urlInput">URL (LinkedIn, GitHub, Article, YouTube, etc.) *</label>
+          <div class="input-with-action">
+            <input type="url" id="urlInput" required placeholder="https://..." />
+            <button type="button" class="btn-ghost small" id="quickFillBtn">Demo Fill</button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="titleInput">Title / Headline *</label>
+            <input type="text" id="titleInput" required placeholder="Key takeaway or post title" />
+          </div>
+          <div class="form-group">
+            <label for="authorInput">Author / Publication</label>
+            <input type="text" id="authorInput" placeholder="e.g., Kent C. Dodds" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="labelsInput">Labels (comma or Enter separated)</label>
+          <input type="text" id="labelsInput" placeholder="playwright, ai-agents, architecture" />
+          <div id="suggestedLabels" class="tag-suggestions"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="contentInput">Saved Content / Excerpt (for offline reading)</label>
+          <textarea id="contentInput" rows="4" placeholder="Paste the post text or key paragraphs here..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="notesInput">Initial Research Notes</label>
+          <textarea id="notesInput" rows="2" placeholder="Why did you save this? Action items..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" id="cancelSaveBtn">Cancel</button>
+          <button type="submit" class="btn-primary">Save to Vault</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Slide-over Reader Drawer -->
+  <div class="drawer-backdrop" id="readerDrawer" hidden>
+    <article class="drawer-panel">
+      <div class="drawer-topbar">
+        <div class="drawer-actions-left">
+          <button class="btn-ghost small" id="drawerFavBtn">☆ Favorite</button>
+          <button class="btn-ghost small" id="drawerArchiveBtn">📥 Archive</button>
+        </div>
+        <div class="drawer-actions-right">
+          <a id="drawerOriginalLink" href="#" target="_blank" rel="noopener noreferrer" class="btn-primary small">Open Original ↗</a>
+          <button class="icon-btn" id="closeDrawerBtn">✕</button>
+        </div>
+      </div>
+
+      <div class="drawer-body" id="drawerBody">
+        <!-- Populated dynamically by ui.js -->
+      </div>
+    </article>
+  </div>
+
+  <!-- Load JS Modules in Dependency Order -->
+  <script src="js/data.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
