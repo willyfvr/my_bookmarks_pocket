@@ -41,15 +41,16 @@ body {
   color: var(--text-primary);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  width: 780px;
-  height: 580px;
-  overflow: hidden;
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 /* App Layout */
 .app-shell {
   display: flex;
   min-height: 100vh;
+  width: 100%;
 }
 
 .sidebar {
