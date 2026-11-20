@@ -1,0 +1,20 @@
+services:
+  web:
+    image: nginx:alpine
+    container_name: bookmarks-pocket-web
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/usr/share/nginx/html:ro
+
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.56.0-noble
+    container_name: bookmarks-pocket-playwright
+    working_dir: /e2e
+    depends_on:
+      - web
+    volumes:
+      - ./e2e:/e2e
+    environment:
+      - BASE_URL=http://web
+    command: ["npx", "playwright", "test"]

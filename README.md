@@ -1,74 +1,29 @@
-# 🔖 Willy's Bookmark Pocket — Web & LinkedIn Research Library
+# 🔖 Bookmark's Pocket
 
-**Bookmark's Pocket** is a lightweight, distraction-free bookmark manager and research repository inspired by Pocket. Built with zero-dependency vanilla web technologies, it allows you to save LinkedIn posts, GitHub repositories, YouTube videos, and web articles—complete with offline text excerpts, custom `#labels`, source auto-detection, and live-saving research notes.
+**Bookmark's Pocket** es un gestor de marcadores y biblioteca de investigación liviana, inspirada en Pocket y construida con tecnologías web nativas (**HTML, CSS y JavaScript puro**, sin frameworks ni dependencias externas).
 
-Designed with a **dual-mode architecture**, Willy's Bookmark Pocket runs seamlessly both as a **standalone web application** (hostable for free on GitHub Pages/Netlify) and as a **Chrome Extension (Manifest V3)** with right-click context-menu saving.
+Permite guardar enlaces de LinkedIn, repositorios de GitHub, videos de YouTube y artículos web con extractos de texto, etiquetas personalizadas (`#labels`), detección automática de plataforma y notas de investigación con guardado automático.
 
----
-
-## ✨ Key Features
-
-* **Dual-Mode Storage Adapter:** Automatically detects its runtime environment—using `chrome.storage.local` when running as a Chrome Extension (syncing with background context menus) and falling back to browser `localStorage` when opened as a standalone web page.
-* **Automatic Source Detection:** Intelligently categorizes and badges saved links by platform (`LinkedIn`, `GitHub`, `YouTube`, `X / Twitter`, `Substack`, `Medium`, or `Web Article`).
-* **Multi-Dimensional Filtering:** Filter your library simultaneously by status (*All Saves*, *To Research*, *Favorites*, *Archived*), source platform, and multiple custom `#labels`.
-* **Editorial Research Reader:** Clicking any card opens a distraction-free slide-over reader with serif typography (`Newsreader`) for comfortable reading, inline label management, and auto-saving research notes.
-* **1-Click Context Menu Save (Extension Mode):** Right-click anywhere on a webpage or link and select **"Save to Pocket"** to capture it immediately without leaving your tab.
-* **Data Portability:** Full **JSON Export & Import** built into the sidebar so you can back up your research vault or transfer it across devices.
-* **Responsive & Themeable:** Clean Light and Dark modes powered by CSS custom properties, plus Grid and Editorial List view toggles.
+Funciona en **dos modos**:
+1. **Como aplicación web:** Se puede abrir en cualquier navegador o desplegar gratis en GitHub Pages / Netlify.
+2. **Como extensión de Chrome (Manifest V3):** Permite guardar páginas o enlaces con clic derecho desde cualquier pestaña.
 
 ---
 
-## 📁 Project Structure
+## 📁 Estructura del Proyecto
+
+Si recién entrás al código, acá tenés qué hace cada archivo:
 
 ```text
 my_bookmarks_pocket/
-├── manifest.json       # Chrome Extension Manifest V3 configuration
-├── background.js       # Service worker for browser right-click context menus
-├── index.html          # Semantic HTML layout, save modal, and reader drawer
-├── style.css           # Design tokens (CSS variables), light/dark themes, and responsive grid
-├── README.md           # Project documentation
+├── manifest.json       # Configuración de la extensión para Chrome (permisos, íconos, nombre)
+├── background.js       # Script en segundo plano para el menú contextual (clic derecho -> Guardar)
+├── index.html          # Estructura principal de la interfaz, modal para guardar y panel de lectura
+├── style.css           # Estilos, variables CSS de colores y modo claro/oscuro
+├── docker-compose.yml  # Configuración de Docker para levantar el entorno local sin instalar nada
+├── .dockerignore       # Archivos que Docker ignora al montar el proyecto
+├── README.md           # Esta guía
 └── js/
-    ├── data.js         # Storage adapter (Chrome Storage / LocalStorage) & source detection
-    ├── ui.js           # Pure DOM rendering functions for cards, filters, and reader view
-    └── app.js          # Application state controller, search/filter pipeline, and event handlers
-```
-
----
-
-## 🚀 Getting Started
-
-### Option 1: Run as a Chrome Extension (Recommended)
-
-1. Open Google Chrome and navigate to `chrome://extensions/`.
-2. Enable **Developer mode** using the toggle in the top-right corner.
-3. Click **Load unpacked** in the top-left toolbar.
-4. Select the root folder of this project (`my_bookmarks_pocket/`).
-5. Pin **LinkVault** to your toolbar for quick access, or right-click any page and choose **Save to LinkVault**.
-
-> **Tip for Developers:** Whenever you modify `index.html`, `style.css`, or any file inside `js/`, click the **Reload** icon on the LinkVault card in `chrome://extensions/` to apply your changes.
-
-### Option 2: Run as a Standalone Web App
-
-Because Willy's Bookmark Pocket requires no build step, bundlers, or backend servers:
-
-* **Locally:** Open `index.html` directly in any modern web browser (or use the *Live Server* extension in VS Code).
-* **Free Cloud Hosting:** Deploy the folder directly to **GitHub Pages**, **Netlify Drop**, or **Vercel** for instant personal access from any browser.
-
----
-
-## 🛠️ Customization Guide
-
-The codebase is modularized so you can easily customize specific parts without touching unrelated logic:
-
-| Goal | File to Edit |
-| :--- | :--- |
-| **Change colors, fonts, or popup dimensions** | `style.css` (modify the `:root` CSS variables or `body` dimensions) |
-| **Add new website badges/platforms** | `js/data.js` (update `detectSource()`) & `js/ui.js` (`SOURCE_ICONS`) |
-| **Modify card layout or reader drawer UI** | `js/ui.js` |
-| **Adjust search, sorting, or keyboard shortcuts** | `js/app.js` |
-
----
-
-## 📄 License
-
-This project is open-source and free to use, modify, and self-host for personal or commercial workflows.
+    ├── data.js         # Maneja el guardado de datos (Chrome Storage o LocalStorage) y detecta la web
+    ├── ui.js           # Dibuja las tarjetas, filtros y el panel de lectura en pantalla
+    └── app.js          # Conecta los botones, el buscador y la lógica general de la aplicación
